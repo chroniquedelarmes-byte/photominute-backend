@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photo Minute — Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --violet:#6C4EF5;
+    --violet-deep:#4A2FD1;
+    --coral:#FF6B6B;
+    --sun:#FFD166;
+    --mint:#2EC4B6;
+    --bg:#FAF9FF;
+    --card:#FFFFFF;
+    --text:#241E3D;
+    --text-mute:#8A84A6;
+    --line: rgba(108,78,245,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Poppins', sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{
+    width:100%;
+    max-width:420px;
+    min-height:100vh;
+    background:var(--bg);
+    display:flex;
+    flex-direction:column;
+    position:relative;
+  }
+  header{
+    padding:24px 20px 14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .badge{
+    width:42px; height:42px;
+    background:linear-gradient(135deg, var(--violet), var(--coral));
+    border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+    box-shadow:0 6px 16px rgba(108,78,245,0.35);
+  }
+  .badge svg{width:22px; height:22px;}
+  header h1{
+    font-family:'Baloo 2', sans-serif;
+    font-size:19px;
+    font-weight:700;
+    color:var(--text);
+  }
+  header p{
+    font-size:12px;
+    color:var(--text-mute);
+    font-weight:500;
+    margin-top:1px;
+  }
+  .back-link{
+    margin-left:auto;
+    font-size:12px;
+    font-weight:600;
+    color:var(--violet-deep);
+    text-decoration:none;
+    padding:8px 12px;
+    border-radius:12px;
+    background:var(--card);
+    border:1px solid var(--line);
+  }
+
+  main{flex:1; padding:8px 20px 24px; display:flex; flex-direction:column; gap:16px;}
+
+  .step-label{display:flex; align-items:center; gap:8px;}
+  .step-emoji{font-size:20px;}
+  .step-title{
+    font-family:'Baloo 2', sans-serif;
+    font-size:17px;
+    font-weight:700;
+    color:var(--text);
+  }
+  .hint{
+    font-size:12px;
+    color:var(--text-mute);
+    text-align:center;
+    line-height:1.5;
+  }
+
+  .upload-zone{
+    border:2px dashed var(--line);
+    border-radius:22px;
+    padding:26px 16px;
+    text-align:center;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    background:var(--card);
+  }
+  .upload-zone.has-image{ border-style:solid; border-color:var(--violet); padding:0; aspect-ratio:3/4; }
+  .upload-zone input{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .upload-zone img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .upload-zone .icon-circle{
+    width:56px; height:56px; margin:0 auto 10px;
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--violet), var(--coral));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .upload-zone .icon-circle svg{ width:24px; height:24px; color:#fff; }
+  .upload-zone .label{ font-size:13px; font-weight:600; color:var(--violet-deep); }
+  .upload-zone .sub{ font-size:11.5px; color:var(--text-mute); margin-top:4px; }
+  .clear-photo{
+    position:absolute; top:10px; right:10px; z-index:2;
+    width:28px; height:28px; border-radius:50%;
+    background:rgba(0,0,0,0.55); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; cursor:pointer;
+  }
+
+  .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    padding:8px 13px;
+    border-radius:20px;
+    background:var(--card);
+    border:1.5px solid var(--line);
+    font-size:12px;
+    font-weight:600;
+    color:var(--text);
+    cursor:pointer;
+  }
+  .chip.active{ border-color:var(--violet); background:linear-gradient(135deg, rgba(108,78,245,0.1), rgba(255,107,107,0.1)); color:var(--violet-deep); }
+
+  textarea{
+    width:100%;
+    min-height:80px;
+    border-radius:16px;
+    border:2px solid var(--line);
+    padding:12px 14px;
+    font-family:'Poppins', sans-serif;
+    font-size:13.5px;
+    color:var(--text);
+    resize:vertical;
+  }
+  textarea:focus{ outline:none; border-color:var(--violet); }
+
+  .cta{
+    width:100%;
+    padding:17px;
+    background:linear-gradient(135deg, var(--violet), var(--coral));
+    color:#fff;
+    border:none;
+    border-radius:18px;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    box-shadow:0 8px 20px rgba(108,78,245,0.3);
+  }
+  .cta:disabled{opacity:0.35; cursor:not-allowed; box-shadow:none;}
+  .cta.secondary{
+    background:var(--card); color:var(--violet-deep);
+    border:2px solid var(--line); box-shadow:none;
+  }
+
+  .hidden{display:none !important;}
+
+  .spinner{
+    width:40px; height:40px;
+    border-radius:50%;
+    border:4px solid var(--line);
+    border-top-color:var(--violet);
+    animation:spin 0.8s linear infinite;
+    margin:0 auto;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .result-img{
+    width:100%; border-radius:20px;
+    box-shadow:0 10px 30px rgba(74,47,209,0.2);
+    display:block;
+  }
+  .cost-note{
+    font-size:11px; color:var(--text-mute); text-align:center;
+    background:var(--card); border:1px solid var(--line);
+    border-radius:12px; padding:8px 10px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 3l1.9 4.6L18 9l-4.1 1.9L12 15l-1.9-4.1L6 9l4.1-1.4L12 3z"/><path d="M5 17l.9 2.1L8 20l-2.1.9L5 23l-.9-2.1L2 20l2.1-.9L5 17z"/></svg>
+    </div>
+    <div>
+      <h1>Studio</h1>
+      <p>Change le décor ou la tenue par IA ✨</p>
+    </div>
+    <a href="index.html" class="back-link">← Retour</a>
+  </header>
+
+  <main>
+    <div class="step-label"><span class="step-emoji">📤</span><span class="step-title">Photo du client</span></div>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" accept="image/*" id="photoInput">
+      <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+      <div class="label">Importer une photo</div>
+      <div class="sub">JPG ou PNG, une photo par personne</div>
+    </div>
+
+    <div class="step-label" style="margin-top:6px;"><span class="step-emoji">🎬</span><span class="step-title">Que veux-tu changer ?</span></div>
+    <div class="chip-row" id="chipRow">
+      <div class="chip" data-prompt="Habille la personne d'un costume/veste élégant, en gardant son visage identique">En costume</div>
+      <div class="chip" data-prompt="Place la personne dans un grand salon moderne et lumineux, en gardant son visage et sa pose identiques">Grand salon</div>
+      <div class="chip" data-prompt="Place la personne assise sur un cheval en extérieur, en gardant son visage identique">Sur un cheval</div>
+      <div class="chip" data-prompt="Remplace l'arrière-plan par un studio photo professionnel avec un fond dégradé gris, en gardant la personne identique">Studio pro</div>
+      <div class="chip" data-prompt="Améliore l'éclairage et la netteté générale de la photo sans changer la personne ni le décor">Améliorer la photo</div>
+    </div>
+
+    <textarea id="promptInput" placeholder="Ou décris toi-même ce que tu veux (ex : mets-la dans un bureau, avec une chemise blanche)…"></textarea>
+
+    <p class="cost-note">💡 Chaque génération coûte environ 0,04–0,05 $ sur ton compte Replicate.</p>
+
+    <button class="cta" id="generateBtn" disabled>✨ Générer</button>
+
+    <div id="loadingBox" class="hidden" style="display:flex; flex-direction:column; align-items:center; gap:12px; padding:20px 0;">
+      <div class="spinner"></div>
+      <p class="hint">La génération peut prendre 15 à 30 secondes…</p>
+    </div>
+
+    <div id="resultBox" class="hidden" style="display:flex; flex-direction:column; gap:12px;">
+      <img id="resultImg" class="result-img">
+      <button class="cta" id="downloadResultBtn">⬇️ Télécharger le résultat</button>
+      <button class="cta secondary" id="regenerateBtn">🔁 Refaire avec une autre description</button>
+    </div>
+
+    <div id="errorBox" class="hidden">
+      <p class="hint" style="color:var(--coral); font-weight:600;">Oups, la génération a échoué. Vérifie ta photo, ta description, et ton crédit Replicate.</p>
+    </div>
+  </main>
+</div>
+
+<script>
+// ⚠️ Même backend que Photo Minute
+const BACKEND_URL = 'https://photominute-backend.onrender.com';
+
+let selectedPhotoFile = null;
+let resultBlobUrl = null;
+
+const uploadZone = document.getElementById('uploadZone');
+const photoInput = document.getElementById('photoInput');
+const chipRow = document.getElementById('chipRow');
+const promptInput = document.getElementById('promptInput');
+const generateBtn = document.getElementById('generateBtn');
+const loadingBox = document.getElementById('loadingBox');
+const resultBox = document.getElementById('resultBox');
+const resultImg = document.getElementById('resultImg');
+const errorBox = document.getElementById('errorBox');
+const downloadResultBtn = document.getElementById('downloadResultBtn');
+const regenerateBtn = document.getElementById('regenerateBtn');
+
+function wireUploadInput(){
+  const input = document.getElementById('photoInput');
+  input.addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    selectedPhotoFile = file;
+    const url = URL.createObjectURL(file);
+    uploadZone.classList.add('has-image');
+    uploadZone.innerHTML = `
+      <img src="${url}">
+      <div class="clear-photo" id="clearPhotoBtn">✕</div>
+      <input type="file" accept="image/*" id="photoInput">
+    `;
+    document.getElementById('clearPhotoBtn').addEventListener('click', (ev)=>{
+      ev.preventDefault(); ev.stopPropagation();
+      selectedPhotoFile = null;
+      uploadZone.classList.remove('has-image');
+      uploadZone.innerHTML = `
+        <input type="file" accept="image/*" id="photoInput">
+        <div class="icon-circle"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <div class="label">Importer une photo</div>
+        <div class="sub">JPG ou PNG, une photo par personne</div>
+      `;
+      wireUploadInput();
+      updateGenerateState();
+    });
+    wireUploadInput();
+    updateGenerateState();
+  });
+}
+wireUploadInput();
+
+chipRow.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    chipRow.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    promptInput.value = chip.dataset.prompt;
+    updateGenerateState();
+  });
+});
+
+promptInput.addEventListener('input', ()=>{
+  chipRow.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  updateGenerateState();
+});
+
+function updateGenerateState(){
+  generateBtn.disabled = !(selectedPhotoFile && promptInput.value.trim().length > 0);
+}
+
+generateBtn.addEventListener('click', async ()=>{
+  loadingBox.classList.remove('hidden');
+  resultBox.classList.add('hidden');
+  errorBox.classList.add('hidden');
+  generateBtn.classList.add('hidden');
+
+  try{
+    const formData = new FormData();
+    formData.append('photo', selectedPhotoFile, selectedPhotoFile.name);
+    formData.append('prompt', promptInput.value.trim());
+
+    const res = await fetch(`${BACKEND_URL}/api/studio-edit`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if(!res.ok){ throw new Error(`Erreur serveur (${res.status})`); }
+
+    const blob = await res.blob();
+    if(resultBlobUrl) URL.revokeObjectURL(resultBlobUrl);
+    resultBlobUrl = URL.createObjectURL(blob);
+
+    loadingBox.classList.add('hidden');
+    resultImg.src = resultBlobUrl;
+    resultBox.classList.remove('hidden');
+  }catch(err){
+    console.error(err);
+    loadingBox.classList.add('hidden');
+    errorBox.classList.remove('hidden');
+    generateBtn.classList.remove('hidden');
+  }
+});
+
+regenerateBtn.addEventListener('click', ()=>{
+  resultBox.classList.add('hidden');
+  generateBtn.classList.remove('hidden');
+});
+
+downloadResultBtn.addEventListener('click', ()=>{
+  if(!resultBlobUrl) return;
+  const link = document.createElement('a');
+  link.download = 'photo-minute-studio.png';
+  link.href = resultBlobUrl;
+  link.click();
+});
+</script>
+</body>
+</html>
